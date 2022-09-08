@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <title>Document</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="style.css">
+    
+
+</head>
+
+<body>
+
+
+    <div class="Container" > 
+        <h1>Bootcamp Functions API </h1>
+
+        <div class="functions">
+            <div class="word-game" x-data="{
+                sentence:'',
+                longWord: '',
+                shortWord: '',
+                wordLength: 0,
+                checkSentence(){
+                    axios.get(`/api/word_game?sentence=${this.sentence}`)
+                    .then((result)=>{
+                        this.longWord=result.data.longestWord;
+                        this.shortWord=result.data.shortestWord;
+                        this.wordLength=result.data.sum;
+                    })
+                    setTimeout(() => {
+                        this.sentence = '';
+                        this.longWord='';
+                        this.shortWord='';
+                        this.wordLength=0;
+                    }, 4000);
+                }
+            }">
+                <h2>Word Game</h2>
+                <p></p>
+                <div>
+                    <label for="sentence">Type in your sentence:</label>
+                    <input type="text" id="sentence" x-model="sentence" placeholder="Type in your sentence here...">
+                    <button x-on:click="checkSentence">Search Word</button>
+            
+            </div>
+                <div>Longest word: <span x-text="longWord"> </span></div>
+                <div  class="message" x-text="longWord" x-show="longWord.length>0"></div>
+
+                <div> Shortest word:<span x-text="shortWord"> </span></div>
+                <div  class="message" x-text="shortWord" x-show="shortWord.length>0"></div>
+
+                <div> Word Length:<span x-text="wordLength"> </span></div>
+                <div  class="message" x-text="wordLength" x-show="wordLength.length>0"></div>
+
+                </div>
+
+
+        
+
+            <div class="phonebill" x-data="{
+           bill:'',
+           total:'',
+           smsprice:0.00,
+           callprice:0.00,
+            totalCost() {
+            const parameters={
+            bill: this.bill,
+            sms_price: this.smsprice,
+            call_price:this.callprice
+            }
+                axios.post('/api/phonebill',parameters)
+                .then((result)=>{
+                this.total = result.data.total;
+
+            });
+                setTimeout(() => {
+                    this.total = '';
+                    this.bill='';
+                    this.smsprice;
+                    this.callprice
+                }, 4000);
+            }
+
+            }">
+
+                <h2>Total Phone Bill</h2>
+                <p>Curious to know how much airtime you have used since your last recharge? Let's check if you have anything to worry about.</p>
+
+                <div class="bill-input">
+                    <label for="bill">Please enter your airtime usage: </label>
+                    <input type="text" x-model="bill" id="bill" placeholder="call,sms">
+                    <button x-on:click="totalCost" >Show</button>
+                </div>
+
+                You have used: <div x-show="total.length > 0" class="message" x-text="total">
+
+                </div>
+
+            </div>
+        </div>
+            <div class="enough-airtime" x-data="{
+            airtimeUsage: '',
+            availableAmount: '',
+            airtimeBalance: '',
+            calculate() {
+                let parameters={
+                    usage:this.airtimeUsage,
+                    available:this.availableAmount
+                }
+                axios.post('/api/enough', parameters)
+                .then((result)=>{
+                this.airtimeBalance = result.data.result;
+                })
+                setTimeout(() => {
+                    this.airtimeBalance = '';
+                    this.airtimeUsage='';
+                    this.availableAmount='';
+                }, 5000);
+            }
+
+        }">
+                <h2>Enough Airtime</h2>
+                <p>
+                    After making so many calls, texting your friends to help you debug your code and searching for
+                    answers on StackOverFlow, you must be needing a top-up. No? Let's check!
+                </p>
+                <div class="input">
+                    <label for="usage"> Please enter your airtime usage:</label>
+                    <input type="text" x-model="airtimeUsage" id="usage" placeholder="call,sms,data">
+
+                </div>
+                <div class="input">
+                    <label for="amount"> Amount available:</label>
+                    <input type="text" x-model="availableAmount" id="amount" placeholder="R0.00">
+
+                </div>
+                <div>
+                    <button x-on:click="calculate" > Calculate airtime usage</button>
+                </div>
+               Your airtime balance is: <div class="balance" x-text="airtimeBalance" x-show="airtimeBalance.length>0">
+
+                </div>
+
+            </div> 
+
+        
+    </div>
+</body>
+
+</html>
